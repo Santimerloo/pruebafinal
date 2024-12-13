@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Preguntas de Argentina</title>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+<body>
+    <div id="login">
+        <h1>Iniciar Sesión</h1>
+        <input type="text" id="username" placeholder="Nombre de Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Iniciar Sesión</button>
+        <button onclick="showRegister()">Registrar</button>
+    </div>
+
+    <div id="register" style="display:none;">
+        <h1>Registrarse</h1>
+        <input type="text" id="newUsername" placeholder="Nuevo Usuario">
+        <input type="password" id="newPassword" placeholder="Nueva Contraseña">
+        <button onclick="register()">Registrar</button>
+        <button onclick="showLogin()">Volver al Login</button>
+    </div>
+
+    <div id="game" style="display:none;">
+        <h1>Preguntas</h1>
+        <div id="question"></div>
+        <div id="answers"></div>
+        <button id="next" onclick="nextQuestion()" style="display:none;">Siguiente</button>
+        <div id="score" style="display:none;"></div>
+    </div>
+
+    <script src="JS/main.js"></script>
+</body>
+</html>
