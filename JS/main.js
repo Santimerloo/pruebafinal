@@ -54,7 +54,7 @@ function register() {
     if (username && password) {
         users.push({ username, password, score: 0 });
         localStorage.setItem('users', JSON.stringify(users));
-        alert('Usuario registrado exitosamente');
+        Swal.fire('Usuario registrado exitosamente');  // Reemplaza el alert
         showLogin();
     } else {
         alert('Por favor complete todos los campos');
@@ -158,7 +158,7 @@ function endGame() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     currentUser.score = score;
 
-    // Actualizar lista de usuarios con el puntaje del usuario actual
+    // Actualizar puntaje del usuario actual
     const userIndex = users.findIndex(user => user.username === currentUser.username);
     if (userIndex !== -1) {
         users[userIndex].score = score; // Actualizar puntaje en el array de usuarios
@@ -213,7 +213,7 @@ async function loadInitialUsers() {
         localStorage.setItem('users', JSON.stringify(localUsers));
         users = localUsers;
 
-        console.log('Usuarios cargados correctamente:', users);
+
     } catch (error) {
         console.error('Error al cargar usuarios desde JSON:', error);
     }
