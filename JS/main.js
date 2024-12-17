@@ -40,10 +40,20 @@ const questions = [
         options: ["Ciudad de Buenos Aires", "Córdoba Capital", "San Miguel de Tucumán", "Rosario"],
         correct: 0
     },
+    {
+        question: "¿De que pais se independizo Argentina?",
+        options: ["Estados Unidos", "Inglaterra", "España", "Francia"],
+        correct: 2
+    },
+    {
+        question: "¿Quien es el creador de la bandera argentina?",
+        options: ["San Martin", "Mariano Moreno", "Cornelio Savedra", "Manuel Belgrano"],
+        correct: 3
+    },
 ];
 
-let currentQuestion = 1;
-let score = 1;
+let currentQuestion = 0;
+let score = 0;
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
 // Función de registro
