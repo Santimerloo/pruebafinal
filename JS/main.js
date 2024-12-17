@@ -12,32 +12,32 @@ const questions = [
     },
     {
         question: "¿Quien es el actual presidente de Argentina?",
-        options: [" Javier Milei", "Alberto Fernandez", "Carlos Saul Menem", "Lionel Andres Messo"],
+        options: ["Javier Milei", "Alberto Fernandez", "Carlos Saul Menem", "Lionel Andres Messi"],
         correct: 0
     },
     {
-        question: "¿Cuatas provincias tiene Argentina?",
+        question: "¿Cuántas provincias tiene Argentina?",
         options: ["23", "21", "16", "24"],
         correct: 0
     },
     {
-        question: "En que año fue la revolucion de mayo",
+        question: "¿En qué año fue la Revolución de Mayo?",
         options: ["1810", "1816", "1820", "1830"],
         correct: 0
     },
     {
-        question: "En que batalla murio Cabral",
-        options: ["San Lorenzo", "Maypu", "Chacabuco ", "Ayacucho "],
+        question: "¿En qué batalla murió Cabral?",
+        options: ["San Lorenzo", "Maypu", "Chacabuco", "Ayacucho"],
         correct: 0
     },
     {
-        question: "Que localidad es conocida como la ciudad de las diagonales",
-        options: ["La Plata", "Colegiales", "Belgrano", "La boca"],
+        question: "¿Qué localidad es conocida como la ciudad de las diagonales?",
+        options: ["La Plata", "Colegiales", "Belgrano", "La Boca"],
         correct: 0
     },
     {
-        question: "Donde se encuentra la casa rosada",
-        options: ["Ciudad de Buenos Aires", "Cordoba Capital", "San Miguel De Tucuman", "Rosario"],
+        question: "¿Dónde se encuentra la Casa Rosada?",
+        options: ["Ciudad de Buenos Aires", "Córdoba Capital", "San Miguel de Tucumán", "Rosario"],
         correct: 0
     },
 ];
@@ -50,7 +50,7 @@ let users = JSON.parse(localStorage.getItem('users')) || [];
 function register() {
     const username = document.getElementById('newUsername').value;
     const password = document.getElementById('newPassword').value;
-    
+
     if (username && password) {
         users.push({ username, password, score: 0 });
         localStorage.setItem('users', JSON.stringify(users));
@@ -92,7 +92,11 @@ function showGame() {
     document.getElementById('login').style.display = 'none';
     document.getElementById('register').style.display = 'none';
     document.getElementById('game').style.display = 'block';
-    loadQuestion();
+
+    loadInitialUsers().then(() => {
+        loadQuestion();
+        updateRanking();
+    });
 }
 
 // Cargar pregunta
@@ -114,7 +118,7 @@ function loadQuestion() {
 function checkAnswer(selected) {
     const question = questions[currentQuestion];
     const buttons = document.querySelectorAll('#answers button');
-    
+
     buttons.forEach((button, index) => {
         if (index === selected) {
             if (index === question.correct) {
@@ -149,10 +153,68 @@ function nextQuestion() {
 function endGame() {
     document.getElementById('score').style.display = 'block';
     document.getElementById('score').innerText = `Tu puntaje es: ${score}`;
-    
+
+    // Guardar puntaje del usuario actual
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     currentUser.score = score;
+
+    // Actualizar lista de usuarios con el puntaje del usuario actual
+    const userIndex = users.findIndex(user => user.username === currentUser.username);
+    if (userIndex !== -1) {
+        users[userIndex].score = score; // Actualizar puntaje en el array de usuarios
+    }
+
+    // Guardar los cambios en localStorage
+    localStorage.setItem('users', JSON.stringify(users));
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
+    // Mostrar ranking actualizado
     updateRanking();
+}
+
+// Actualizar ranking
+function updateRanking() {
+    const sortedUsers = users.sort((a, b) => b.score - a.score); // Ordenar por puntaje descendente
+    const rankingTable = document.querySelector('#rankingTable tbody');
+
+    // Limpiar la tabla
+    rankingTable.innerHTML = '';
+
+    // Insertar usuarios y puntajes
+    sortedUsers.forEach((user, index) => {
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${user.username}</td>
+                <td>${user.score}</td>
+            </tr>
+        `;
+        rankingTable.innerHTML += row;
+    });
+}
+
+// Cargar usuarios desde el JSON y combinarlos con localStorage
+async function loadInitialUsers() {
+    try {
+        const response = await fetch('JS/users.json'); // Ruta correcta al archivo users.json en la carpeta JS
+        const jsonUsers = await response.json();
+
+        // Obtener usuarios del localStorage
+        const localUsers = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Evitar duplicados y combinar usuarios
+        jsonUsers.forEach(jsonUser => {
+            if (!localUsers.find(user => user.username === jsonUser.username)) {
+                localUsers.push(jsonUser);
+            }
+        });
+
+        // Guardar usuarios combinados en localStorage
+        localStorage.setItem('users', JSON.stringify(localUsers));
+        users = localUsers;
+
+        console.log('Usuarios cargados correctamente:', users);
+    } catch (error) {
+        console.error('Error al cargar usuarios desde JSON:', error);
+    }
 }
