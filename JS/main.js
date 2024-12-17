@@ -42,8 +42,8 @@ const questions = [
     },
 ];
 
-let currentQuestion = 0;
-let score = 0;
+let currentQuestion = 1;
+let score = 1;
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
 // Función de registro
@@ -52,15 +52,19 @@ function register() {
     const password = document.getElementById('newPassword').value;
 
     if (username && password) {
+        // Verificar si el usuario ya existe
+        if (users.some(user => user.username === username)) {
+            Swal.fire('Error', 'El usuario ya está registrado', 'error');
+            return;
+        }
         users.push({ username, password, score: 0 });
         localStorage.setItem('users', JSON.stringify(users));
-        Swal.fire('Usuario registrado exitosamente');  // Reemplaza el alert
+        Swal.fire('Éxito', 'Usuario registrado exitosamente', 'success');
         showLogin();
     } else {
-        alert('Por favor complete todos los campos');
+        Swal.fire('Error', 'Por favor complete todos los campos', 'error');
     }
 }
-
 // Función de login
 function login() {
     const username = document.getElementById('username').value;
@@ -71,7 +75,7 @@ function login() {
         localStorage.setItem('currentUser', JSON.stringify(user));
         showGame();
     } else {
-        alert('Credenciales incorrectas');
+        Swal.fire('Credenciales incorrectas');
     }
 }
 
@@ -196,7 +200,7 @@ function updateRanking() {
 // Cargar usuarios desde el JSON y combinarlos con localStorage
 async function loadInitialUsers() {
     try {
-        const response = await fetch('JS/users.json'); // Ruta correcta al archivo users.json en la carpeta JS
+        const response = await fetch('JS/users.json');
         const jsonUsers = await response.json();
 
         // Obtener usuarios del localStorage
