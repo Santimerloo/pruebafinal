@@ -55,6 +55,8 @@ const questions = [
 let currentQuestion = 0;
 let score = 0;
 let users = JSON.parse(localStorage.getItem('users')) || [];
+let timerInterval;
+let timeRemaining = 10;
 
 // Función de registro
 function register() {
@@ -119,17 +121,22 @@ function loadQuestion() {
     document.getElementById('question').innerText = question.question;
     const answersDiv = document.getElementById('answers');
     answersDiv.innerHTML = '';
-
+    
     question.options.forEach((option, index) => {
         const button = document.createElement('button');
         button.innerText = option;
         button.onclick = () => checkAnswer(index);
         answersDiv.appendChild(button);
     });
+
+    // Iniciar el timer
+    startTimer();
 }
 
 // Verificar respuesta
 function checkAnswer(selected) {
+    clearInterval(timerInterval);  // Detener el timer
+
     const question = questions[currentQuestion];
     const buttons = document.querySelectorAll('#answers button');
 
@@ -227,8 +234,23 @@ async function loadInitialUsers() {
         localStorage.setItem('users', JSON.stringify(localUsers));
         users = localUsers;
 
-
     } catch (error) {
         console.error('Error al cargar usuarios desde JSON:', error);
     }
+}
+
+// Función de temporizador
+function startTimer() {
+    timeRemaining = 10;
+    document.getElementById('timer').innerText = `Tiempo restante: ${timeRemaining}s`;
+
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        document.getElementById('timer').innerText = `Tiempo restante: ${timeRemaining}s`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            nextQuestion();  // Avanzar a la siguiente pregunta cuando se acaba el tiempo
+        }
+    }, 1000);
 }
