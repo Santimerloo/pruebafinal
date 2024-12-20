@@ -241,16 +241,19 @@ async function loadInitialUsers() {
 
 // Función de temporizador
 function startTimer() {
-    timeRemaining = 10;
-    document.getElementById('timer').innerText = `Tiempo restante: ${timeRemaining}s`;
+    let timeRemaining = 10; 
+    const timeElement = document.getElementById('tiempo-restante');
+    timeElement.textContent = timeRemaining;
 
     timerInterval = setInterval(() => {
         timeRemaining--;
-        document.getElementById('timer').innerText = `Tiempo restante: ${timeRemaining}s`;
+        timeElement.textContent = timeRemaining;
 
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
-            nextQuestion();  // Avanzar a la siguiente pregunta cuando se acaba el tiempo
+            Swal.fire('¡Tiempo agotado!', 'Avanzando a la siguiente pregunta...', 'info');
+            nextQuestion();
         }
     }, 1000);
 }
+
